@@ -1,10 +1,12 @@
 EXECUTABLE=high_precision_pso
 SOURCE_DIRECTORY=src
-BINARY_DIRECTORY=bin
+LIB_DIRECTORY=lib
 
 .PHONY: all
 all:
-	$(MAKE) -C $(SOURCE_DIRECTORY)/
+	$(MAKE) -C $(SOURCE_DIRECTORY)/ && \
+    mkdir -p $(LIB_DIRECTORY) && \
+    cp $(SOURCE_DIRECTORY)/$(LIB_DIRECTORY)/* $(LIB_DIRECTORY)
 
 .PHONY: test
 test: 
@@ -12,7 +14,8 @@ test:
 
 
 clean:
-	$(MAKE) clean -C $(SOURCE_DIRECTORY)
+	$(MAKE) clean -C $(SOURCE_DIRECTORY) && \
+    rm -r $(LIB_DIRECTORY)
 
 .PHONY: doc
 
