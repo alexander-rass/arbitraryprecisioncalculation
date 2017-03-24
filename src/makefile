@@ -6,6 +6,10 @@ DEBUGFLAG=
 TEST_PROGRAM_APC=test_program_apc
 BUILD_DIR=build
 
+LIB_FILE=libarbitraryprecisioncalculation.a
+LIB_LINK=$(subst lib, -l, $(LIB_FILE:.a=))
+LIB_DIR=lib
+
 SOURCES=$(filter-out testing/arbitrary_precision_calculation_tests.cpp, $(wildcard */*.cpp))
 
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.o))
@@ -14,9 +18,12 @@ H_FILES=$(SOURCES:.cpp=.h)
 
 all: $(TEST_PROGRAM_APC)
 	
-$(TEST_PROGRAM_APC): $(OBJECTS) $(BUILD_DIR)/testing/arbitrary_precision_calculation_tests.o testing/arbitrary_precision_calculation_tests.cpp
-	$(CXX) $(OBJECTS) $(BUILD_DIR)/testing/arbitrary_precision_calculation_tests.o $(LDFLAGS) -o $@
+$(TEST_PROGRAM_APC): $(LIB_DIR)/$(LIB_FILE) $(BUILD_DIR)/testing/arbitrary_precision_calculation_tests.o $(LIB_DIR)/$(LIB_FILE)
+	$(CXX) -L./$(LIB_DIR) $(BUILD_DIR)/testing/arbitrary_precision_calculation_tests.o $(LIB_LINK) $(LDFLAGS) -o $@
 
+$(LIB_DIR)/$(LIB_FILE): $(OBJECTS)
+	mkdir -p $(LIB_DIR) && \
+    ar rcs $(LIB_DIR)/$(LIB_FILE) $(OBJECTS)
 
 test: $(TEST_PROGRAM_APC)
 	./$(TEST_PROGRAM_APC)
@@ -33,7 +40,7 @@ $(BUILD_DIR)/%.d: ;
 -include $(OBJECTS:.o=.d)
 
 clean:
-	rm -rf $(BUILD_DIR) $(TEST_PROGRAM_APC)
+	rm -rf $(BUILD_DIR) $(TEST_PROGRAM_APC) $(LIB_DIR)
 
 debug:
 	make all "OPTIMIZATION=-O0" "DEBUGFLAG=-g"
