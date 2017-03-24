@@ -1,3 +1,0 @@
-[submodule "doc/doxygen-bootstrapped"]
-	path = doc/doxygen-bootstrapped
-	url = https://github.com/Velron/doxygen-bootstrapped.git
